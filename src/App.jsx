@@ -70,7 +70,7 @@ export default function App() {
 
    const findIngredients = () => {
     if (!inputText.trim()) {
-      alert("Please enter an ingredient");
+      alert("Please enter the customer's request");
       return;
     }
 
@@ -263,7 +263,7 @@ export default function App() {
           value={inputText}
           onChange={(e) => { setInputText(e.target.value); setResults([]); setShowWarning(false); setShowIncompleteError(false); }}
           onKeyDown={(e) => { if (e.key === "Enter") findIngredients(); }}
-          placeholder="e.g. frosty starry citrus"
+          placeholder="e.g. triple chocolate"
           style={{ width: "300px", padding: "10px", fontSize: "16px" }}
         />
 
