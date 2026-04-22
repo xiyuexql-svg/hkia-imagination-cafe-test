@@ -179,22 +179,24 @@ export default function App() {
     found = found.slice(0, limit);
 
     // For single-ingredient bases with "or", combine all options into one slot
-    if (hasOr && isSingleIngredientBase) {
-      // Get all options for each word and combine into one
-      const allOptions = [];
-      for (const word of words) {
-        if (data[word]) {
-          allOptions.push(...data[word]);
-        }
-      }
-      const combined = allOptions.join(" or ");
-      const anyFill = Array(limit).fill("Any");
-      anyFill[0] = combined;
-      setResults(anyFill);
-      setShowIncompleteError(false);
-      setShowWarning(false);
-      return;
+  if (hasOr && isSingleIngredientBase) {
+  const allOptions = [];
+
+  for (const word of words) {
+    if (data[word]) {
+      allOptions.push(...data[word]);
     }
+  }
+
+  const combined = allOptions.join(" or ");
+  const anyFill = Array(limit).fill("Any");
+  anyFill[0] = combined;
+
+  setResults(anyFill);
+  setShowIncompleteError(false);
+  setShowWarning(false);
+  return;
+}
 
     // For single-ingredient bases, "or" counts as 1 valid option
     // Otherwise, check if we have enough ingredients
