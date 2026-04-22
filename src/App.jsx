@@ -16,16 +16,16 @@ const data = {
   veggie: ["Spinip"],
   banana: ["Banana"],
   chocolate: ["Chocolate Coin"],
-  citrus: ["Lemon", "Lime", "Orange"],
+  citrus: ["Lemon / Lime / Orange"],
   confetti: ["Rainbow Sprinkles"],
   eggy: ["Egg"],
   lychee: ["Lychee"],
   nutty: ["Toasted Almond"],
-  refreshing: ["Pear", "Peach", "Grape", "Dragonfruit"],
+  refreshing: ["Pear / Peach / Grape / Dragonfruit"],
   sakura: ["Sakura"],
   starry: ["Starfruit"],
   sweet: ["Candy Cloud"],
-  tropical: ["Kiwi", "Mango", "Coconut", "Pineapple"],
+  tropical: ["Kiwi / Mango / Coconut / Pineapple"],
   wheat: ["Flour"],
 };
 
@@ -99,35 +99,47 @@ export default function App() {
     let ingredientKeys = [];
 
     // Handle "or" case: if exactly 2 words and both are valid ingredients, show as combined option with all choices
-    if (hasOr) {
-  const allOptions = [];
+  if (hasOr && words.length === 2) {
+      const word1 = words[0].trim();
+      const word2 = words[1].trim();
+      if (data[word1] && data[word2]) {
+        // Show all ingredient options for each category
+        const group = `${data[word1].join(" or ")} or ${data[word2].join(" or ")}`;
+        found.push(group);
+        ingredientKeys.push(word1, word2);
+      } else {
+        // Fall back to regular processing
+        for (const word of words) {
+          if (data[word]) {
+            found.push(data[word][0]);
+            ingredientKeys.push(word);
+          }
+        }
+      }
+    } else {
+      // Regular processing (no "or" or more than 2 words)
+      for (let i = 0; i < words.length; i++) {
+        const word = words[i].trim();
 
-  for (const word of words) {
-    if (data[word]) {
-      allOptions.push(...data[word]);
+        if (multiplierMap[word] && words[i + 1]) {
+          const multiplier = multiplierMap[word];
+          const key = words[i + 1];
+
+          if (data[key]) {
+            for (let j = 0; j < multiplier; j++) {
+              found.push(data[key][0]);
+              ingredientKeys.push(key);
+            }
+          }
+
+          i++; // Skip the next word since it was used as the key
+        } else if (data[word]) {
+          found.push(data[word][0]);
+          ingredientKeys.push(word);
+        }
+      }
     }
-  }
 
-  const combined = allOptions.join(" or ");
-  const limit = getLimit();
-
-  // Single ingredient base
-  if (limit === 1) {
-    setResults([combined]);
-    setShowIncompleteError(false);
-    setShowWarning(false);
-    return;
-  }
-
-  // Multi-ingredient base (Sando, Ramen, etc.)
-  const result = [combined];
-  while (result.length < limit) {
-    result.push("Any");
-  }
-
-  setResults(result);
-  return;
-}
 
     // 🍰 SPECIAL RULE: 3-ingredient bases (Sando/Dango/Ramen/Rainbow Dango) 2-category = Any
     // Only applies when user explicitly uses "and" or "or" to combine two categories
