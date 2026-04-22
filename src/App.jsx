@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import headerImg from "./assets/header-img.jpg";
+
 
 const baseingredients = {
   "Boba Tea": ["Tea Leaves"],
@@ -56,7 +57,45 @@ const sweetnessOptions = ["Unsweetened", "Semi-Sweet", "Sweet", "Very Sweet"];
 const milkOptions = ["No Milk", "Milk"];
 const bobaOptions = ["Boba", "No Boba"];
 
+
 export default function App() {
+  const [visits, setVisits] = useState(0);
+
+useEffect(() => {
+  const runCounter = async () => {
+    try {
+      const alreadyCounted = sessionStorage.getItem("countedVisit");
+
+      // always get current count first (safe fallback)
+      const getRes = await fetch(
+        "https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/get"
+      );
+      const getData = await getRes.json();
+      setVisits(getData.count ?? 0);
+
+      // only increment once per session
+      if (!alreadyCounted) {
+        await fetch(
+          "https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/up"
+        );
+
+        sessionStorage.setItem("countedVisit", "true");
+
+        // refresh count after increment
+        const updated = await fetch(
+          "https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/get"
+        );
+        const updatedData = await updated.json();
+        setVisits(updatedData.count ?? 0);
+      }
+    } catch (err) {
+      console.log("Counter error:", err);
+      setVisits(0); // fallback so UI NEVER breaks
+    }
+  };
+
+  runCounter();
+}, []);
   const [selectedBase, setSelectedBase] = useState("Anything");
   const [sweetness, setSweetness] = useState("Unsweetened");
   const [milk, setMilk] = useState("");
@@ -409,7 +448,10 @@ const baseIngredient = baseingredients[selectedBase];
           )}
         </div>
       )}
-
+      
+<div className="visitor-counter">
+  👀 Visitors: {visits}
+</div>
       </center>
       </div>
     </div>

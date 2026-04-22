@@ -213,4 +213,22 @@ body {
   min-width: 20px;   /* keeps numbers aligned */
   text-align: right;
   color: #555;
+}.visitor-counter {
+  margin-top: 30px;
+  padding: 10px 16px;
+
+  background: #fff7fb; /* soft pink café paper */
+  border: 2px solid #ffb6d9;
+  border-radius: 12px;
+
+  display: inline-block;
+  text-align: center;
+
+  font-size: 14px;
+  color: #5a4a4a;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+
+  font-family: "Arial", sans-serif;
+  letter-spacing: 0.5px;
 }
