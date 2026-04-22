@@ -59,43 +59,17 @@ const bobaOptions = ["Boba", "No Boba"];
 
 
 export default function App() {
-  const [visits, setVisits] = useState(0);
+const [visits, setVisits] = useState(0);
 
 useEffect(() => {
-  const runCounter = async () => {
-    try {
-      const alreadyCounted = sessionStorage.getItem("countedVisit");
-
-      // always get current count first (safe fallback)
-      const getRes = await fetch(
-        "https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/get"
-      );
-      const getData = await getRes.json();
-      setVisits(getData.count ?? 0);
-
-      // only increment once per session
-      if (!alreadyCounted) {
-        await fetch(
-          "https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/up"
-        );
-
-        sessionStorage.setItem("countedVisit", "true");
-
-        // refresh count after increment
-        const updated = await fetch(
-          "https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/get"
-        );
-        const updatedData = await updated.json();
-        setVisits(updatedData.count ?? 0);
-      }
-    } catch (err) {
-      console.log("Counter error:", err);
-      setVisits(0); // fallback so UI NEVER breaks
-    }
-  };
-
-  runCounter();
+  fetch("https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/up")
+    .then(res => res.json())
+    .then(data => {
+      setVisits(data.count);
+    })
+    .catch(err => console.error("Counter error:", err));
 }, []);
+
   const [selectedBase, setSelectedBase] = useState("Anything");
   const [sweetness, setSweetness] = useState("Unsweetened");
   const [milk, setMilk] = useState("");
