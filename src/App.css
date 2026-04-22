@@ -146,6 +146,16 @@ body {
 .error {
   color: red;
   margin-top: 10px;
+  background: rgb(249, 253, 205);
+  padding: 15px;
+  border-radius: 10px;
+  width: 50%;
+}
+.searchtips {
+  color: rgb(0, 0, 0);
+  text-decoration: italic;
+  font-size: 12px;
+  margin-top: 10px;
 }
 .sample-box {
   background: white;

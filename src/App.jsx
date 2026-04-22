@@ -2,57 +2,104 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import headerImg from "./assets/header-img.jpg";
 
-
 const baseingredients = {
-  "Boba Tea": ["Tea Leaves"],
-  Mochi: [ "Rice Flour" ],
-  Sando: ["Whipped Cream"],
-  "Rainbow Dango": ["Rainbow Beam + Mochi with ingredients below:" ],
-  Dango: [ "Stick + Mochi with ingredients below:"],
-  Nigiri: ["Rice"],
-  Onigiri: ["Seaweed Sheet"] ,
-  Ramen: [ "Noodle Grass"],
-  "Snow Ice": ["Shaved Ice"],
-  Taiyaki: [ "Batter"]
+  "Boba Tea": {
+    base: ["Tea Leaves"],
+    limit: 1
+  },
+  Mochi: {
+    base: ["Rice Flour"],
+    limit: 1
+  },
+  Sando: {
+    base: ["Whipped Cream"],
+    limit: 3
+  },
+  "Rainbow Dango": {
+    base: ["Rainbow Beam + Flavored Mochi Below"],
+    limit: 3
+  },
+  Dango: {
+    base: ["Stick + Flavored Mochi Below"],
+    limit: 3
+  },
+  Nigiri: {
+    base: ["Rice"],
+    limit: 1
+  },
+  Onigiri: {
+    base: ["Rice + Seaweed Sheet"],
+    limit: 1
+  },
+  Ramen: {
+    base: ["Noodle Grass"],
+    limit: 3
+  },
+  "Sushi Roll": {
+    base: ["Rice + Seaweed Sheet"],
+    limit: 3
+  },
+  "Snow Ice": {
+    base: ["Shaved Ice"],
+    limit: 1
+  },
+  Taiyaki: {
+    base: ["Batter"],
+    limit: 1
+  },
+  Anything: {
+    base: [],
+    limit: 3
+  }
 };
 
 const data = {
-  apple: ["Apple"],
-  cheesy: ["Moon Cheese"],
-  cinnamon: ["Cinna Bloom"],
-  coffee: ["Candlenut"],
-  creamy: ["Coral Milk"],
-  frosty: ["Snowcicle"],
-  magical: ["Glow Berry"],
-  pumpkin: ["Pumpkin"],
-  rich: ["Tofu"],
-  spicy: ["Magma Bloom"],
-  strawberry: ["Strawberry"],
-  tart: ["Cherry or Plum"],
-  veggie: ["Spinip"],
-  banana: ["Banana"],
-  chocolate: ["Chocolate Coin"],
-  citrus: ["Lemon or Lime or Orange"],
-  confetti: ["Rainbow Sprinkles"],
-  eggy: ["Egg"],
-  lychee: ["Lychee"],
-  nutty: ["Toasted Almond"],
-  refreshing: ["Pear or Peach or Grape or Dragonfruit"],
-  sakura: ["Sakura"],
-  starry: ["Starfruit"],
-  sweet: ["Candy Cloud"],
-  tropical: ["Kiwi or Mango or Coconut or Pineapple"],
-  wheat: ["Flour"],
+  "apple": ["Apple"],
+  "banana": ["Banana"],
+  "cheesy": ["Moon Cheese"],
+  "chocolate": ["Chocolate Coin"],
+  "cinnamon": ["Cinna Bloom"],
+  "citrus": ["Lemon or Lime or Orange"],
+  "coffee": ["Candlenut"],
+  "confetti": ["Rainbow Sprinkles"],
+  "creamy": ["Coral Milk"],
+  "eggy": ["Egg"],
+  "frosty": ["Snowcicle"],
+  "ginger": ["Ginger"],
+  "imaginary_crab": ["Imaginary Crab"],
+  "imaginary_fish": ["Imaginary Salmon or Imaginary Tuna"],
+  "imaginary_seafood": ["Imaginary Scallop or Imaginary Sea Urchin or Imaginary Shrimp or Imaginary Squid"],
+  "lychee": ["Lychee"],
+  "magical": ["Glow Berry"],
+  "nutty": ["Toasted Almond"],
+  "pumpkin": ["Pumpkin"],
+  "refreshing": ["Dragonfruit or Grapes or Peach or Pear"],
+  "rich": ["Tofu"],
+  "sakura": ["Sakura"],
+  "soy": ["Soy Sauce"],
+  "spicy": ["Magma Bloom"],
+  "starry": ["Starfruit"],
+  "strawberry": ["Strawberry"],
+  "sweet": ["Candy Cloud"],
+  "tart": ["Cherry or Plum"],
+  "tropical": ["Coconut or Kiwi or Mango or Pineapple"],
+  "veggie": ["Spinip"],
+  "wasabi": ["Wasabi"],
+  "wheat": ["Flour"]
 };
 
-
+const nigiriAddonMap = {
+  ginger: "Ginger",
+  soy: "Soy Sauce",
+  wasabi: "Wasabi"
+};
 const multiplierMap = {
   single: 1,
   double: 2,
   triple: 3,
 };
 
-const baseOptions = ["Anything", "Boba Tea", "Dango","Mochi", "Onigiri",  "Rainbow Dango", "Ramen", "Sando", "Snow Ice", "Taiyaki"];
+const baseOptions = ["Anything", "Boba Tea", "Mochi", "Dango",  "Rainbow Dango", "Onigiri", "Nigiri", "Sushi Roll", "Ramen", "Sando", "Snow Ice", "Taiyaki"];
 const sweetnessOptions = ["Unsweetened", "Semi-Sweet", "Sweet", "Very Sweet"];
 const milkOptions = ["No Milk", "Milk"];
 const bobaOptions = ["Boba", "No Boba"];
@@ -79,10 +126,9 @@ useEffect(() => {
   const [showWarning, setShowWarning] = useState(false);
   const [showIncompleteError, setShowIncompleteError] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [nigiriAddon, setNigiriAddon] = useState("");
   const getLimit = () => {
-    if (selectedBase === "Mochi" || selectedBase === "Snow Ice" || selectedBase === "Taiyaki" || selectedBase === "Onigiri") return 1;
-    if (selectedBase === "Boba Tea") return 1;
-    return 3;
+    return baseingredients[selectedBase]?.limit || 3;
   };
 
   const getSweetnessLevel = () => {
@@ -171,7 +217,7 @@ useEffect(() => {
 
     // 🍰 SPECIAL RULE: 3-ingredient bases (Sando/Dango/Ramen/Rainbow Dango) 2-category = Any
     // Only applies when user explicitly uses "and" or "or" to combine two categories
-    const threeIngredientBases = ["Anything", "Sando", "Dango", "Ramen", "Rainbow Dango"];
+    const threeIngredientBases = ["Anything", "Sando", "Dango", "Ramen", "Rainbow Dango", "Sushi Roll"];
     if (
       threeIngredientBases.includes(selectedBase) &&
       (hasAnd || hasOr) &&
@@ -248,10 +294,14 @@ useEffect(() => {
       found.push(`Tapioca x ${boba === "Boba" ? 1 : 0}`);
       found.push(`Honeycomb x ${level}`);
     }
-
+    if (selectedBase === "Nigiri" && nigiriAddon) {
+      if (data[nigiriAddon]) {
+        found.push(data[nigiriAddon][0]);
+      }
+    }
     setResults(found);
   };
-const baseIngredient = baseingredients[selectedBase];
+const baseIngredient = baseingredients[selectedBase]?.base || [];
   return (
     <div className="container">
       <div className="header">
@@ -284,7 +334,29 @@ const baseIngredient = baseingredients[selectedBase];
         ))}
       </div>
       <div className="custom-options">
+{selectedBase === "Nigiri" && (
+  <div className="boba-card">
+    <p className="section-title">Nigiri Add-ons</p>
 
+    <div className="select-grid">
+      <select
+        value={nigiriAddon}
+        onChange={(e) => {
+          setNigiriAddon(e.target.value);
+          setResults([]);
+          setShowWarning(false);
+          setShowIncompleteError(false);
+          setShowConfirm(true);
+        }}
+      >
+        <option value="">None</option>
+        <option value="ginger">Ginger</option>
+        <option value="soy">Soy Sauce</option>
+        <option value="wasabi">Wasabi</option>
+      </select>
+    </div>
+  </div>
+)}
   {selectedBase === "Boba Tea" && (
     <div className="boba-card">
       <p className="section-title">Boba Tea Customization</p>
@@ -347,9 +419,15 @@ const baseIngredient = baseingredients[selectedBase];
           <div style={{ fontSize: "14px", color: "#666", marginBottom: "5px" }}>Is this the customer's order?</div>
           <div style={{ fontSize: "18px", fontWeight: "bold", color: "#333" }}>
             {selectedBase === "Boba Tea" 
-              ? `${toTitleCase(sweetness)} ${toTitleCase(inputText)}${boba === "Boba" ? " Boba" : ""}${milk ? " Milk" : ""} Tea${boba === "No Boba" ? ", No Boba" : ""}`
-              : `${toTitleCase(inputText)} ${toTitleCase(selectedBase)}`
-            }
+  ? `${toTitleCase(sweetness)} ${toTitleCase(inputText)}${boba === "Boba" ? " Boba" : ""}${milk ? " Milk" : ""} Tea${boba === "No Boba" ? ", No Boba" : ""}`
+
+  : selectedBase === "Nigiri"
+  ? `${toTitleCase(inputText)} ${toTitleCase(selectedBase)}${
+      nigiriAddon ? ` with ${nigiriAddonMap[nigiriAddon]}` : ""
+    }`
+
+    : `${toTitleCase(inputText)} ${toTitleCase(selectedBase)}`
+}
           </div>
         </div>
       )}
@@ -384,14 +462,23 @@ const baseIngredient = baseingredients[selectedBase];
     </div>
 )}
       {showWarning && (
-        <div className="error">
-          This might be an invalid order. Check again?
-        </div>
-      )}
+  <div className="error">
+    This might be an invalid order. Check again?
 
+    <div className="searchtips">
+      <p>
+        Your option requires a single ingredient, but it looks like you entered multiple flavours.
+      </p>
+    </div>
+  </div>
+)}
       {showIncompleteError && (
         <div className="error">
           It doesn't sound right, add more details?
+        <div className="searchtips">
+          <p>Try adding one more flavour, or combine them with "and" / "or"</p >
+          <p>Examples: Sweet and Tropical | Creamy or Fruity | Double Rich Strawberry</p>
+        </div>
         </div>
       )}
       <br/>
