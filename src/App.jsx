@@ -26,20 +26,20 @@ const data = {
   rich: ["Tofu"],
   spicy: ["Magma Bloom"],
   strawberry: ["Strawberry"],
-  tart: ["Cherry", "Plum"],
+  tart: ["Cherry or Plum"],
   veggie: ["Spinip"],
   banana: ["Banana"],
   chocolate: ["Chocolate Coin"],
-  citrus: ["Lemon / Lime / Orange"],
+  citrus: ["Lemon or Lime or Orange"],
   confetti: ["Rainbow Sprinkles"],
   eggy: ["Egg"],
   lychee: ["Lychee"],
   nutty: ["Toasted Almond"],
-  refreshing: ["Pear / Peach / Grape / Dragonfruit"],
+  refreshing: ["Pear or Peach or Grape or Dragonfruit"],
   sakura: ["Sakura"],
   starry: ["Starfruit"],
   sweet: ["Candy Cloud"],
-  tropical: ["Kiwi / Mango / Coconut / Pineapple"],
+  tropical: ["Kiwi or Mango or Coconut or Pineapple"],
   wheat: ["Flour"],
 };
 
@@ -240,9 +240,16 @@ export default function App() {
 const baseIngredient = baseingredients[selectedBase];
   return (
     <div className="container">
+      <div className="header">
+  <img
+    src="src\assets\header-img.jpg"
+    alt="Header"
+    className="header-img"
+  />
+</div>
+      <h2 style={{ color: "#333" }}>Imagination Cafe Recipe Generator</h2>
 <div className="inner-container">
   <center>
-    <p style={{ fontSize: "16px", fontWeight: "bold", color: "#333" }}>Recipe Options</p>
       <div className="base-options">
         {baseOptions.map(b => (
           <label key={b} style={{ marginRight: "15px", cursor: "pointer" }}>
@@ -300,7 +307,7 @@ const baseIngredient = baseingredients[selectedBase];
         setShowIncompleteError(false);
         setShowConfirm(true);
       }}
-      placeholder="e.g. triple chocolate"
+      placeholder="e.g. Sweet and Tropical"
     />
   </div>
 
@@ -378,7 +385,7 @@ const baseIngredient = baseingredients[selectedBase];
     <div className="card-title">Custom Ingredient</div>
           {results.length === 0 ? (
             <div>❌ No ingredients found</div>
-          ) : (<ol style={{ listStyle: "none", paddingLeft: 0 }}>
+          ) : (<ol className="ingredient-list">
   {results.map((r, i) => (
     <li key={i}>{r}</li>
   ))}
