@@ -85,7 +85,7 @@ const data = {
   "tropical": ["Coconut or Kiwi or Mango or Pineapple"],
   "veggie": ["Spinip"],
   "wasabi": ["Wasabi"],
-  "wheat": ["Flour"]
+  "wheat": ["Flour"],
 };
 
 const nigiriAddonMap = {
@@ -103,7 +103,7 @@ const baseOptions = ["Anything", "Boba Tea", "Mochi", "Dango",  "Rainbow Dango",
 const sweetnessOptions = ["Unsweetened", "Semi-Sweet", "Sweet", "Very Sweet"];
 const milkOptions = ["No Milk", "Milk"];
 const bobaOptions = ["Boba", "No Boba"];
-
+const specialKeywords = ["double", "triple"];
 
 export default function App() {
 const [visits, setVisits] = useState(0);
@@ -127,6 +127,8 @@ useEffect(() => {
   const [showIncompleteError, setShowIncompleteError] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [nigiriAddon, setNigiriAddon] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+const [showSuggestions, setShowSuggestions] = useState(false);
   const getLimit = () => {
     return baseingredients[selectedBase]?.limit || 3;
   };
@@ -155,7 +157,6 @@ useEffect(() => {
     // Check for "and" in input (for Sando/Dango)
     const andPattern = /\s+and\s+/i;
     const hasAnd = andPattern.test(inputText);
-    
     let rawWords;
     if (hasOr) {
       // Split by "or" to get the two options
@@ -169,6 +170,7 @@ useEffect(() => {
     }
     const words = rawWords.filter(w => w.trim() !== "");
 
+    const isImplicitAnd = !hasOr && !hasAnd &&  words.length === 2;
     let found = [];
     let ingredientKeys = [];
 
@@ -220,7 +222,7 @@ useEffect(() => {
     const threeIngredientBases = ["Anything", "Sando", "Dango", "Ramen", "Rainbow Dango", "Sushi Roll"];
     if (
       threeIngredientBases.includes(selectedBase) &&
-      (hasAnd || hasOr) &&
+      (hasAnd || hasOr || isImplicitAnd) &&
       new Set(ingredientKeys).size === 2
     ) {
       const uniqueKeys = [...new Set(ingredientKeys)];
@@ -402,14 +404,57 @@ const baseIngredient = baseingredients[selectedBase]?.base || [];
       className="input-box"
       value={inputText}
       onChange={(e) => {
-        setInputText(e.target.value);
-        setResults([]);
-        setShowWarning(false);
-        setShowIncompleteError(false);
-        setShowConfirm(true);
-      }}
+  const value = e.target.value;
+  setInputText(value);
+
+  setResults([]);
+  setShowWarning(false);
+  setShowIncompleteError(false);
+  setShowConfirm(true);
+
+  // 👇 AUTOCOMPLETE LOGIC
+  const lastWord = value.split(/\s+/).pop().toLowerCase();
+
+// 👇 combine ALL data keys + multipliers
+const allOptions = [
+  ...Object.keys(data),   // ✅ no more slice
+  ...specialKeywords 
+];
+
+if (lastWord.length > 0) {
+  const matches = allOptions.filter(option =>
+    option.startsWith(lastWord)
+  );
+
+  setSuggestions(matches);
+  setShowSuggestions(true);
+} else {
+  setShowSuggestions(false);
+}
+}}
       placeholder="e.g. Sweet and Tropical"
     />
+    {showSuggestions && suggestions.length > 0 && (
+  <div className="autocomplete-box">
+    {suggestions.map((s, i) => (
+      <div
+        key={i}
+        className="autocomplete-item"
+        onClick={() => {
+          const words = inputText.split(/\s+/);
+          words[words.length - 1] = s;
+
+          setInputText(words.join(" "));
+          setShowSuggestions(false);
+
+          document.querySelector(".input-box")?.focus();
+        }}
+      >
+        {s}
+      </div>
+    ))}
+  </div>
+)}
   </div>
 
 </div>
@@ -474,7 +519,7 @@ const baseIngredient = baseingredients[selectedBase]?.base || [];
 )}
       {showIncompleteError && (
         <div className="error">
-          It doesn't sound right, add more details?
+          It doesn't seem right, check your details?
         <div className="searchtips">
           <p>Try adding one more flavour, or combine them with "and" / "or"</p >
           <p>Examples: Sweet and Tropical | Creamy or Fruity | Double Rich Strawberry</p>
