@@ -68,7 +68,10 @@ export default function App() {
     return spaced.replace(/\b\w/g, (match) => match.toUpperCase());
   };
 
-  const findIngredients = () => {
+   const findIngredients = () => {
+    if (!inputText.trim()) {
+      alert("Please enter an ingredient");
+      return;
     }
 
     // Check for "or" in input - handle multiple "or" cases
