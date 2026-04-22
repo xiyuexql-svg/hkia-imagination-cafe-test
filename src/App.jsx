@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import headerImg from "./assets/header-img.png";
+import headerImg from "./assets/header-img.jpg";
 
 const baseingredients = {
   "Boba Tea": ["Tea Leaves"],
