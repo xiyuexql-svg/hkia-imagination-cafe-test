@@ -485,7 +485,7 @@ if (lastWord.length > 0) {
           findIngredients();
           setShowConfirm(false);
           
-    document.querySelector(".input-box")?.focus();
+    document.querySelector(".base-ingredient-card")?.focus();
         }}
       >
         Yes
