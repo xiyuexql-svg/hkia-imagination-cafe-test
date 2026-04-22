@@ -65,7 +65,7 @@ useEffect(() => {
   fetch("https://api.counterapi.dev/v2/xiyuexql-svgs-team-3857/first-counter-3857/up")
     .then(res => res.json())
     .then(data => {
-      setVisits(data.count);
+      setVisits(data.data.up_count);
     })
     .catch(err => console.error("Counter error:", err));
 }, []);
