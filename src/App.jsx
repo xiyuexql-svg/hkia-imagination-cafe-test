@@ -69,9 +69,6 @@ export default function App() {
   };
 
   const findIngredients = () => {
-    if (!inputText.trim()) {
-      alert("Please enter an ingredient");
-      return;
     }
 
     // Check for "or" in input - handle multiple "or" cases
