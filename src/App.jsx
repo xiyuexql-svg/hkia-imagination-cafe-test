@@ -277,18 +277,33 @@ const baseIngredient = baseingredients[selectedBase];
       <p className="section-title">Boba Tea Customization</p>
 
       <div className="select-grid">
-        <select value={sweetness} onChange={(e) => setSweetness(e.target.value)}>
+        <select value={sweetness} onChange={(e) =>  { setSweetness(e.target.value)
+        setResults([]);
+        setShowWarning(false);
+        setShowIncompleteError(false);
+        setShowConfirm(true);
+      }}>
           {sweetnessOptions.map(s => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
 
-        <select value={milk} onChange={(e) => setMilk(e.target.value)}>
+        <select value={milk} onChange={(e) => { setMilk(e.target.value);
+        setResults([]);
+        setShowWarning(false);
+        setShowIncompleteError(false);
+        setShowConfirm(true);
+      }}>
           <option value="">Milk Option</option>
           <option value="Milk">Milk</option>
         </select>
 
-        <select value={boba} onChange={(e) => setBoba(e.target.value)}>
+        <select value={boba} onChange={(e) => { setBoba(e.target.value);
+        setResults([]);
+        setShowWarning(false);
+        setShowIncompleteError(false);
+        setShowConfirm(true);
+      }}>
           {bobaOptions.map(b => (
             <option key={b} value={b}>{b}</option>
           ))}
