@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import headerImg from "./assets/header-img.png";
 
 const baseingredients = {
   "Boba Tea": ["Tea Leaves"],
@@ -242,7 +243,7 @@ const baseIngredient = baseingredients[selectedBase];
     <div className="container">
       <div className="header">
   <img
-    src="src\assets\header-img.jpg"
+    src={headerImg}
     alt="Header"
     className="header-img"
   />
