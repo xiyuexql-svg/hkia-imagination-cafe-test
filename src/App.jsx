@@ -180,7 +180,7 @@ export default function App() {
     found = found.slice(0, limit);
 
     // For single-ingredient bases with "or", combine all options into one slot
-  if (hasOr && isSingleIngredientBase) {
+  if (hasOr && isSingleIngredientBase && selectedBase !== "Boba Tea")  {
   const allOptions = [];
 
   for (const word of words) {
