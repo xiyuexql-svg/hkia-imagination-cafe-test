@@ -1,8 +1,11 @@
 body {
   font-family: Calibri, sans-serif;
   margin: 0;
-  background: #cfe9ff; /* 💙 light blue full page */
+  background-image: url("https://i.ibb.co/h1F3p67d/bg-star.png");
+  background-position: center;
+  background-repeat: repeat;
 }
+
 
 .container {
   padding: 30px;
@@ -10,6 +13,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #ffc0d9;
 }
 
 /* 🌸 inner pink container */
@@ -48,9 +52,12 @@ body {
 
 /* 🍰 recipe card */
 .card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
+  background: #fff3fa;
+  border: 2px solid #ffb6d9;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  color: #333;
   width: 90%;
 }
 
@@ -153,9 +160,28 @@ body {
   border: none;
   font-size: 10px;
   font-weight: 600;
-  color:#fff;
-  background-color:rgb(126, 136, 210);
+  color:#000000;
+  background-color:rgb(236, 238, 255);
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 90px;
+}
+
+.base-ingredient-card {
+  background: #fff3fa;
+  border: 2px solid #ffb6d9;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  width: 90%;
+}
+
+.base-title, .card-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #d14b8f;
+}
+
+.base-item {
+  color: #333;
 }

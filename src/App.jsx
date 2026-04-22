@@ -1,5 +1,19 @@
 import { useState } from "react";
 import "./App.css";
+
+const baseingredients = {
+  "Boba Tea": ["Tea Leaves"],
+  Mochi: [ "Rice Flour" ],
+  Sando: ["Whipped Cream"],
+  "Rainbow Dango": ["Rainbow Beam + Mochi with ingredients below:" ],
+  Dango: [ "Stick + Mochi with ingredients below:"],
+  Nigiri: ["Rice"],
+  Onigiri: ["Seaweed Sheet"] ,
+  Ramen: [ "Noodle Grass"],
+  "Snow Ice": ["Shaved Ice"],
+  Taiyaki: [ "Batter"]
+};
+
 const data = {
   apple: ["Apple"],
   cheesy: ["Moon Cheese"],
@@ -29,6 +43,7 @@ const data = {
   wheat: ["Flour"],
 };
 
+
 const multiplierMap = {
   single: 1,
   double: 2,
@@ -49,7 +64,7 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [showWarning, setShowWarning] = useState(false);
   const [showIncompleteError, setShowIncompleteError] = useState(false);
-const [showConfirm, setShowConfirm] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const getLimit = () => {
     if (selectedBase === "Mochi" || selectedBase === "Snow Ice" || selectedBase === "Taiyaki" || selectedBase === "Onigiri") return 1;
     if (selectedBase === "Boba Tea") return 1;
@@ -222,7 +237,7 @@ const [showConfirm, setShowConfirm] = useState(false);
 
     setResults(found);
   };
-
+const baseIngredient = baseingredients[selectedBase];
   return (
     <div className="container">
 <div className="inner-container">
@@ -249,21 +264,6 @@ const [showConfirm, setShowConfirm] = useState(false);
       </div>
       <div className="custom-options">
 
-  <div className="input-section">
-    <input
-      className="input-box"
-      value={inputText}
-      onChange={(e) => {
-        setInputText(e.target.value);
-        setResults([]);
-        setShowWarning(false);
-        setShowIncompleteError(false);
-        setShowConfirm(true);
-      }}
-      placeholder="e.g. triple chocolate"
-    />
-  </div>
-
   {selectedBase === "Boba Tea" && (
     <div className="boba-card">
       <p className="section-title">Boba Tea Customization</p>
@@ -288,6 +288,21 @@ const [showConfirm, setShowConfirm] = useState(false);
       </div>
     </div>
   )}
+
+  <div className="input-section">
+    <input
+      className="input-box"
+      value={inputText}
+      onChange={(e) => {
+        setInputText(e.target.value);
+        setResults([]);
+        setShowWarning(false);
+        setShowIncompleteError(false);
+        setShowConfirm(true);
+      }}
+      placeholder="e.g. triple chocolate"
+    />
+  </div>
 
 </div>
 <br/>
@@ -344,16 +359,30 @@ const [showConfirm, setShowConfirm] = useState(false);
         </div>
       )}
       <br/>
+      {baseIngredient && selectedBase !== "Anything" && (
+  <div className="base-ingredient-card">
+    <div className="base-title">Base Ingredient</div>
+
+            <div></div>
+    <div className="base-content">
+      {baseIngredient.map((item, i) => (
+        <div key={i} className="base-item">
+          {item}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
       {!showWarning && !showIncompleteError && (
         <div className="card">
+    <div className="card-title">Custom Ingredient</div>
           {results.length === 0 ? (
             <div>❌ No ingredients found</div>
-          ) : (
-            <ol>
-              {results.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ol>
+          ) : (<ol style={{ listStyle: "none", paddingLeft: 0 }}>
+  {results.map((r, i) => (
+    <li key={i}>{r}</li>
+  ))}
+</ol>
           )}
         </div>
       )}
