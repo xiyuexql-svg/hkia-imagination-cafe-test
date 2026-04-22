@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import "./App.css";
 const data = {
   apple: ["Apple"],
   cheesy: ["Moon Cheese"],
@@ -35,13 +35,13 @@ const multiplierMap = {
   triple: 3,
 };
 
-const baseOptions = ["Boba Tea", "Dango","Mochi", "Onigiri",  "Rainbow Dango", "Ramen", "Sando", "Snow Ice", "Taiyaki"];
+const baseOptions = ["Anything", "Boba Tea", "Dango","Mochi", "Onigiri",  "Rainbow Dango", "Ramen", "Sando", "Snow Ice", "Taiyaki"];
 const sweetnessOptions = ["Unsweetened", "Semi-Sweet", "Sweet", "Very Sweet"];
 const milkOptions = ["No Milk", "Milk"];
 const bobaOptions = ["Boba", "No Boba"];
 
 export default function App() {
-  const [selectedBase, setSelectedBase] = useState("Mochi");
+  const [selectedBase, setSelectedBase] = useState("Anything");
   const [sweetness, setSweetness] = useState("Unsweetened");
   const [milk, setMilk] = useState("");
   const [boba, setBoba] = useState("Boba");
@@ -49,15 +49,14 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [showWarning, setShowWarning] = useState(false);
   const [showIncompleteError, setShowIncompleteError] = useState(false);
-
+const [showConfirm, setShowConfirm] = useState(false);
   const getLimit = () => {
     if (selectedBase === "Mochi" || selectedBase === "Snow Ice" || selectedBase === "Taiyaki" || selectedBase === "Onigiri") return 1;
     if (selectedBase === "Boba Tea") return 1;
-    if (selectedBase === "Ramen" || selectedBase === "Rainbow Dango") return 3;
     return 3;
   };
 
-  const getBeeswaxLevel = () => {
+  const getSweetnessLevel = () => {
     const titleSweetness = toTitleCase(sweetness);
     return sweetnessOptions.indexOf(titleSweetness);
   };
@@ -76,7 +75,7 @@ export default function App() {
 
     // Check for "or" in input - handle multiple "or" cases
     const orPattern = /\s+or\s+/i;
-    const hasOr = orPattern.test(inputText);
+    const hasOr = orPattern.test(inputText.toLowerCase());
     
     // Check for "and" in input (for Sando/Dango)
     const andPattern = /\s+and\s+/i;
@@ -143,7 +142,7 @@ export default function App() {
 
     // 🍰 SPECIAL RULE: 3-ingredient bases (Sando/Dango/Ramen/Rainbow Dango) 2-category = Any
     // Only applies when user explicitly uses "and" or "or" to combine two categories
-    const threeIngredientBases = ["Sando", "Dango", "Ramen", "Rainbow Dango"];
+    const threeIngredientBases = ["Anything", "Sando", "Dango", "Ramen", "Rainbow Dango"];
     if (
       threeIngredientBases.includes(selectedBase) &&
       (hasAnd || hasOr) &&
@@ -164,7 +163,7 @@ export default function App() {
         }
       } else {
         // For "and", show each category separately
-        special = uniqueKeys.slice(0, 2).map(k => data[k].join(" or "));
+        special = uniqueKeys.slice(0, 3).map(k => data[k].join(" or "));
         // Fill remaining slots with "Any"
         while (special.length < limit) {
           special.push("Any");
@@ -202,7 +201,7 @@ export default function App() {
     // For single-ingredient bases, "or" counts as 1 valid option
     // Otherwise, check if we have enough ingredients
     const validCount = hasOr && isSingleIngredientBase ? 1 : found.length;
-    if (validCount < limit) {
+    if (validCount < limit && selectedBase !== "Anything") {
       setShowIncompleteError(true);
       setResults([]);
       return;
@@ -215,7 +214,7 @@ export default function App() {
     setShowWarning(isSingleIngredientBase && ingredientWordCount > 1 && !hasOr);
 
     if (selectedBase === "Boba Tea") {
-      const level = getBeeswaxLevel();
+      const level = getSweetnessLevel();
       found.push(`Coral Milk x ${milk ? 1 : 0}`);
       found.push(`Tapioca x ${boba === "Boba" ? 1 : 0}`);
       found.push(`Honeycomb x ${level}`);
@@ -225,9 +224,11 @@ export default function App() {
   };
 
   return (
-    <div style={{ fontFamily: "Arial", padding: "30px", background: "#f5f5f5", minHeight: "100vh" }}>
-
-      <div style={{ marginBottom: "15px" }}>
+    <div className="container">
+<div className="inner-container">
+  <center>
+    <p style={{ fontSize: "16px", fontWeight: "bold", color: "#333" }}>Recipe Options</p>
+      <div className="base-options">
         {baseOptions.map(b => (
           <label key={b} style={{ marginRight: "15px", cursor: "pointer" }}>
             <input
@@ -235,45 +236,63 @@ export default function App() {
               name="base"
               value={b}
               checked={selectedBase === b}
-              onChange={(e) => { setSelectedBase(e.target.value); findIngredients(); setShowIncompleteError(false); }}
+              onChange={(e) => { setSelectedBase(e.target.value); 
+        setResults([]);
+        setShowWarning(false);
+        setShowIncompleteError(false);
+        setShowConfirm(true); }}
               style={{ marginRight: "5px" }}
             />
             {b}
           </label>
         ))}
       </div>
+      <div className="custom-options">
 
-      {selectedBase === "Boba Tea" && (
-        <>
-          <select value={sweetness} onChange={(e) => setSweetness(e.target.value)} style={{ padding: "10px", marginLeft: "10px" }}>
-            {sweetnessOptions.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <select value={milk} onChange={(e) => setMilk(e.target.value)} style={{ padding: "10px", marginLeft: "10px" }}>
-            <option value="">--</option>
-            <option value="Milk">Milk</option>
-          </select>
-          <select value={boba} onChange={(e) => setBoba(e.target.value)} style={{ padding: "10px", marginLeft: "10px" }}>
-            {bobaOptions.map(b => <option key={b} value={b}>{b}</option>)}
-          </select>
-        </>
-      )}
+  <div className="input-section">
+    <input
+      className="input-box"
+      value={inputText}
+      onChange={(e) => {
+        setInputText(e.target.value);
+        setResults([]);
+        setShowWarning(false);
+        setShowIncompleteError(false);
+        setShowConfirm(true);
+      }}
+      placeholder="e.g. triple chocolate"
+    />
+  </div>
 
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          value={inputText}
-          onChange={(e) => { setInputText(e.target.value); setResults([]); setShowWarning(false); setShowIncompleteError(false); }}
-          onKeyDown={(e) => { if (e.key === "Enter") findIngredients(); }}
-          placeholder="e.g. triple chocolate"
-          style={{ width: "300px", padding: "10px", fontSize: "16px" }}
-        />
+  {selectedBase === "Boba Tea" && (
+    <div className="boba-card">
+      <p className="section-title">Boba Tea Customization</p>
 
-        <button onClick={findIngredients} style={{ marginLeft: "10px", padding: "10px" }}>
-          Find
-        </button>
+      <div className="select-grid">
+        <select value={sweetness} onChange={(e) => setSweetness(e.target.value)}>
+          {sweetnessOptions.map(s => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+
+        <select value={milk} onChange={(e) => setMilk(e.target.value)}>
+          <option value="">Milk Option</option>
+          <option value="Milk">Milk</option>
+        </select>
+
+        <select value={boba} onChange={(e) => setBoba(e.target.value)}>
+          {bobaOptions.map(b => (
+            <option key={b} value={b}>{b}</option>
+          ))}
+        </select>
       </div>
+    </div>
+  )}
 
+</div>
+<br/>
       {inputText && (
-        <div style={{ marginBottom: "20px" }}>
+        <div>
           <div style={{ fontSize: "14px", color: "#666", marginBottom: "5px" }}>Is this the customer's order?</div>
           <div style={{ fontSize: "18px", fontWeight: "bold", color: "#333" }}>
             {selectedBase === "Boba Tea" 
@@ -283,9 +302,50 @@ export default function App() {
           </div>
         </div>
       )}
+      <br/>
+{showConfirm && inputText.trim() !== "" && (
+  <div >
+      <button
+        className="yes-btn"
+        onClick={() => {
+          findIngredients();
+          setShowConfirm(false);
+          
+    document.querySelector(".input-box")?.focus();
+        }}
+      >
+        Yes
+      </button>
 
-      {!showWarning && (
-        <div style={{ background: "white", padding: "15px", borderRadius: "8px" }}>
+      <button
+  className="no-btn"
+  onClick={() => {
+    setShowConfirm(false);
+    setResults([]);              // 🧹 clear recipe card
+    setShowWarning(false);       // optional: clear warnings
+    setShowIncompleteError(false);
+
+    document.querySelector(".input-box")?.focus();
+  }}
+>
+  No
+</button>
+    </div>
+)}
+      {showWarning && (
+        <div className="error">
+          This might be an invalid order. Check again?
+        </div>
+      )}
+
+      {showIncompleteError && (
+        <div className="error">
+          It doesn't sound right, add more details?
+        </div>
+      )}
+      <br/>
+      {!showWarning && !showIncompleteError && (
+        <div className="card">
           {results.length === 0 ? (
             <div>❌ No ingredients found</div>
           ) : (
@@ -298,17 +358,8 @@ export default function App() {
         </div>
       )}
 
-      {showWarning && (
-        <div style={{ color: "red", marginTop: "10px", fontSize: "14px", fontStyle: "italic" }}>
-          This might be an invalid order. Check again?
-        </div>
-      )}
-
-      {showIncompleteError && (
-        <div style={{ color: "red", marginTop: "10px", fontSize: "14px", fontStyle: "italic" }}>
-          It does not seem right, add more details?
-        </div>
-      )}
+      </center>
+      </div>
     </div>
   );
 }
