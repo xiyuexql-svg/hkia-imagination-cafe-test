@@ -68,7 +68,7 @@ export default function App() {
     return spaced.replace(/\b\w/g, (match) => match.toUpperCase());
   };
 
-  const findIngredients = () => {
+   const findIngredients = () => {
     if (!inputText.trim()) {
       alert("Please enter an ingredient");
       return;
