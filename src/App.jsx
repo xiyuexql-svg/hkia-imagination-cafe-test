@@ -179,7 +179,7 @@ export default function App() {
     found = found.slice(0, limit);
 
     // For single-ingredient bases with "or", combine all options into one slot
-    if (hasOr && isSingleIngredientBase && found.length >= 2) {
+    if (hasOr && isSingleIngredientBase) {
       // Get all options for each word and combine into one
       const allOptions = [];
       for (const word of words) {
