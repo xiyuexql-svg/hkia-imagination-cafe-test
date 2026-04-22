@@ -153,6 +153,7 @@ body {
   border: none;
   font-size: 10px;
   font-weight: 600;
+  color:#fff;
   background-color:rgb(126, 136, 210);
   cursor: pointer;
   transition: all 0.2s ease;
